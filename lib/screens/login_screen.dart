@@ -43,7 +43,7 @@ class LoginScreen extends StatelessWidget {
                         // mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SizedBox(
-                            height: 170.h,
+                            height: 60.h, // Reduced top spacing
                           ),
                           TextFormField(
                             controller: _emailController,
@@ -134,17 +134,15 @@ class LoginScreen extends StatelessWidget {
                               return null;
                             },
                           ),
-                          SizedBox(height: 250.h),
-                          if (authProvider.isLoading)
-                            CircularProgressIndicator()
-                          else
-                            Padding(
-                              padding: EdgeInsets.only(left: 35.w, right: 35.w),
-                              child: InkWell(
-                                onTap: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    authProvider
-                                        .signIn(
+                          SizedBox(height: 50.h), // Spacing before button
+                          // Login Button Area
+                          Padding( // Keep Padding and InkWell structure
+                            padding: EdgeInsets.only(left: 35.w, right: 35.w),
+                            child: InkWell(
+                              onTap: authProvider.isLoading ? null : () { // Disable onTap when loading
+                                if (_formKey.currentState!.validate()) {
+                                  authProvider
+                                      .signIn(
                                       _emailController.text.trim(),
                                       _passwordController.text.trim(),
                                     )
@@ -159,17 +157,25 @@ class LoginScreen extends StatelessWidget {
                                     });
                                   }
                                 },
-                                child: Container(
-                                  height: 50.h,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.blue,
+                                child: Opacity( // Opacity can be removed if color change is enough
+                                  opacity: 1.0, // Keep full opacity, color change indicates loading
+                                  child: Container(
+                                    height: 50.h,
+                                    decoration: BoxDecoration(
+                                      color: authProvider.isLoading // Change color when loading
+                                          ? Colors.grey.shade400 // Grey out button slightly when loading
+                                          : AppColors.blue,
                                     borderRadius: BorderRadius.circular(15),
                                   ),
                                   child: Center(
-                                    child: Text(
-                                      "Login",
-                                      style: TextStyle(
-                                          color: Colors.white,
+                                    child: authProvider.isLoading
+                                        ? const CircularProgressIndicator( // Show indicator inside button
+                                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                          )
+                                        : Text( // Show text otherwise
+                                          "Login",
+                                          style: TextStyle(
+                                              color: Colors.white,
                                           fontSize: 16.sp,
                                           fontWeight: FontWeight.bold,
                                           fontFamily: 'Poppins'),
@@ -179,9 +185,12 @@ class LoginScreen extends StatelessWidget {
                               ),
                             ),
                           if (authProvider.errorMessage != null)
-                            Text(
-                              authProvider.errorMessage!,
-                              style: TextStyle(color: Colors.red),
+                            Padding( // Added padding around error message
+                              padding: EdgeInsets.symmetric(vertical: 15.h),
+                              child: Text(
+                                authProvider.errorMessage!,
+                                style: TextStyle(color: Colors.red, fontSize: 14.sp),
+                              ),
                             ),
                           TextButton(
                             onPressed: () {
@@ -209,6 +218,7 @@ class LoginScreen extends StatelessWidget {
                                         fontFamily: 'Poppins'),
                                   ),
                                 ],
+                                      ),
                               ),
                             ),
                           ),
