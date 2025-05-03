@@ -34,9 +34,10 @@ dependencies:
   firebase_auth: 
   cloud_firestore: 
   firebase_remote_config: 
-  http: 
+  http: ^1.2.1 # Added version constraint
   intl:
   provider:
+  flutter_bloc: ^8.1.6 # Added flutter_bloc
   flutter_screenutil:
 
 

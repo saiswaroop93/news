@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:news/providers/auth_provider.dart';
-import 'package:news/screens/login_screen.dart';
+// import 'package:news/screens/login_screen.dart'; // Comment out or remove LoginScreen import
 import 'package:news/providers/news_provider.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
+import 'package:news/screens/weather_screen.dart'; // Import WeatherScreen
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
                 colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
                 useMaterial3: true,
               ),
-              home: LoginScreen(),
+               home: const WeatherScreen(), // Change home to WeatherScreen
             );
           }),
     );
