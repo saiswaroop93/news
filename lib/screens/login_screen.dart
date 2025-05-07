@@ -4,13 +4,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:news/appcolors.dart';
 import 'package:news/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
-import 'signup_screen.dart';
-import 'news_screen.dart';
+import 'package:go_router/go_router.dart'; // Import go_router
+// import 'signup_screen.dart'; // No longer needed for direct navigation
+// import 'news_screen.dart'; // No longer needed for direct navigation
 
 class LoginScreen extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  LoginScreen({super.key}); // Added key
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +38,7 @@ class LoginScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Form(
               key: _formKey,
-              child: StatefulBuilder(
+              child: StatefulBuilder( // Keep StatefulBuilder for _obscureText
                 builder: (context, setState) {
                   return ListView(
                     children: [
@@ -111,7 +114,7 @@ class LoginScreen extends StatelessWidget {
                                       : Icons.visibility,
                                 ),
                                 onPressed: () {
-                                  setState(() {
+                                  setState(() { // Use setState from StatefulBuilder
                                     _obscureText = !_obscureText;
                                   });
                                 },
@@ -136,7 +139,7 @@ class LoginScreen extends StatelessWidget {
                           ),
                           SizedBox(height: 250.h),
                           if (authProvider.isLoading)
-                            CircularProgressIndicator()
+                            const CircularProgressIndicator() // Use const
                           else
                             Padding(
                               padding: EdgeInsets.only(left: 35.w, right: 35.w),
@@ -149,13 +152,15 @@ class LoginScreen extends StatelessWidget {
                                       _passwordController.text.trim(),
                                     )
                                         .then((_) {
-                                      if (authProvider.user != null) {
-                                        Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (_) => NewsScreen()),
-                                        );
+                                      // Check mounted status before navigating
+                                      if (context.mounted && authProvider.user != null) {
+                                        context.go('/news'); // Use go_router
                                       }
+                                      // Handle login failure? (e.g., show snackbar)
+                                      // Error message is already handled below
+                                    }).catchError((error) {
+                                        // Optional: Handle specific errors if needed
+                                        // Error message display is handled by provider state
                                     });
                                   }
                                 },
@@ -178,18 +183,17 @@ class LoginScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                          if (authProvider.errorMessage != null)
-                            Text(
-                              authProvider.errorMessage!,
-                              style: TextStyle(color: Colors.red),
+                          if (authProvider.errorMessage != null && !authProvider.isLoading) // Show error only if not loading
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                authProvider.errorMessage!,
+                                style: const TextStyle(color: Colors.red), // Use const
+                              ),
                             ),
                           TextButton(
                             onPressed: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => SignupScreen()),
-                              );
+                              context.go('/signup'); // Use go_router
                             },
                             child: RichText(
                               text: TextSpan(

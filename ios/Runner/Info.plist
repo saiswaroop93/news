@@ -45,5 +45,24 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+    <!-- Added section for Custom URL Scheme -->
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLName</key>
+            <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string> <!-- Using Bundle ID variable -->
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>newsapp</string> <!-- The custom scheme -->
+            </array>
+        </dict>
+    </array>
+    <!-- Note: Universal Links (news.example.com) setup requires adding -->
+    <!-- 'com.apple.developer.associated-domains' to the Runner.entitlements -->
+    <!-- file and configuring it on the Apple Developer portal. -->
+
 </dict>
 </plist>

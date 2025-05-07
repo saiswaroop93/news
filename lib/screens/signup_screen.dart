@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:news/appcolors.dart';
 import 'package:news/providers/auth_provider.dart';
-import 'package:news/screens/login_screen.dart';
 import 'package:provider/provider.dart';
-
-import 'news_screen.dart';
+import 'package:go_router/go_router.dart'; // Import go_router
+// import 'package:news/screens/login_screen.dart'; // No longer needed for direct navigation
+// import 'news_screen.dart'; // No longer needed for direct navigation
 
 class SignupScreen extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  SignupScreen({super.key}); // Added key
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class SignupScreen extends StatelessWidget {
       backgroundColor: AppColors.whiteshade,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-          automaticallyImplyLeading: false,
+          automaticallyImplyLeading: false, // Keep this if no back button is desired
           backgroundColor: AppColors.whiteshade,
           title: Text(
             'MyNews',
@@ -37,7 +39,7 @@ class SignupScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Form(
               key: _formKey,
-              child: StatefulBuilder(
+              child: StatefulBuilder( // Keep StatefulBuilder for _obscureText
                 builder: (context, setState) {
                   return ListView(
                     children: [
@@ -134,7 +136,7 @@ class SignupScreen extends StatelessWidget {
                                       : Icons.visibility,
                                 ),
                                 onPressed: () {
-                                  setState(() {
+                                  setState(() { // Use setState from StatefulBuilder
                                     _obscureText = !_obscureText;
                                   });
                                 },
@@ -153,7 +155,7 @@ class SignupScreen extends StatelessWidget {
                           ),
                           SizedBox(height: 250.h),
                           if (authProvider.isLoading)
-                            CircularProgressIndicator()
+                            const CircularProgressIndicator() // Use const
                           else
                             Padding(
                               padding: EdgeInsets.only(left: 50.w, right: 50.w),
@@ -167,13 +169,15 @@ class SignupScreen extends StatelessWidget {
                                       _nameController.text.trim(),
                                     )
                                         .then((_) {
-                                      if (authProvider.user != null) {
-                                        Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (_) => NewsScreen()),
-                                        );
+                                      // Check mounted status before navigating
+                                       if (context.mounted && authProvider.user != null) {
+                                        context.go('/news'); // Use go_router
                                       }
+                                       // Handle signup failure?
+                                       // Error message is already handled below
+                                    }).catchError((error) {
+                                      // Optional: Handle specific errors if needed
+                                      // Error message display is handled by provider state
                                     });
                                   }
                                 },
@@ -196,18 +200,17 @@ class SignupScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                          if (authProvider.errorMessage != null)
-                            Text(
-                              authProvider.errorMessage!,
-                              style: TextStyle(color: Colors.red),
-                            ),
+                          if (authProvider.errorMessage != null && !authProvider.isLoading) // Show error only if not loading
+                             Padding(
+                               padding: const EdgeInsets.only(top: 8.0),
+                               child: Text(
+                                authProvider.errorMessage!,
+                                style: const TextStyle(color: Colors.red), // Use const
+                               ),
+                             ),
                           TextButton(
                             onPressed: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => LoginScreen()),
-                              );
+                               context.go('/login'); // Use go_router
                             },
                             child: RichText(
                               text: TextSpan(
