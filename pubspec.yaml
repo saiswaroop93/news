@@ -37,6 +37,8 @@ dependencies:
   http: 
   intl:
   provider:
+  flutter_riverpod: ^2.5.1
+  hooks_riverpod: ^2.5.1
   flutter_screenutil:
 
 
